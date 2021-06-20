@@ -1,0 +1,5 @@
+https://jonathan-hui.medium.com/graph-convolutional-networks-gcn-pooling-839184205692
+
+[GCN normalization 식 해석]
+
+One possibility is to multiple Â with D̂⁻¹ where D̂ is the diagonal node degree matrix of Â in measuring the degree of each node. At a high level, instead of summing up itself with its neighbor, multiplying the sum with the inverse D̂⁻¹ sort of averages them. Specifically, D̂ is a diagonal matrix with each diagonal element D̂ᵢᵢ counts the number of edges for the corresponding node i. And the output for each hidden layer becomes σ(D̂⁻¹ÂHⁱWⁱ), instead of σ(ÂHⁱWⁱ).

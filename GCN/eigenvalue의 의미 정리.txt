@@ -1,0 +1,62 @@
+eigenvalue의 의미는 frequency
+Fourier transform에서는 time domain의 signal을 frequency domain으로 분해하는 것.
+어떤 frequency가 얼만큼 들어갔는지를 주파수별로 분석을 하는 것.
+
+GCN에서는 renormalization trick을 통해 eigen value의 범위를 [0,2]로 잡아줌. 
+Eigenvalue의 범위를 줄이면 연산과정의 stability가 높아진다?? 잘 이해가 안됨. Eigenvalue의 범위를 줄여주는 효과가 정확히 어떤 의미인지.
+
+Eigenvalue는 laplacian 값을 eigendecomposition 했을 때 나오는 값. U만큼 돌리고 eigenvalue만큼 scale해주고 U^T만큼 되돌려주면 L과 같은 행렬이 나오게 된다.
+
+이때 eigenvalue는 Fourier transform에서는 frequency를 의미하며 Graph에서는 노드 간의 차이를 의미한다. 아 그래서 Lx를 통해 구한 L값은 모든 노드들의 자신의 이웃간의 차이를 의미하는 거니까 eigenvalue를 정렬시켜주면 이웃간의 차이가 적은 노드들부터 정렬이 되겠구나. 
+
+polynomial parameterization을 통해 이웃노드의 범위를 얼마나 줄 것인지를 고를 수가 있게 되었다. 1hop이면 자기자신까지만, 2hop이면 그냥 바로 주변에 있는 이웃노드들까지 고려하게 된다. 
+
+Chebnet에서 근사식을 통해 computation complexity를 낮췄다. chebyshev polynomial of the first kind는 convolution filter 를 사용할 때 eigen value 값을 [-1,1]로 scaling 해주었다. 
+
+GCN에서는 chebnet에서 사용한 방법에 몇가지 변화를 더 주게된다.
+1. K=1, eigenvalue_max = 2
+2. parameter 단순화
+3. self loop + renormalization trick
+
+K=1로 정하고 activation function을 통해 non-linearity를 추가하여 layer를 깊게 쌓음.
+parameter를 줄여줘서 overfitting을 방지
+원래 eigenvalue는 [0,2]의 범위를 갖고 있는데 renormalization을 통해 eigenvalue의 최대값을 줄여줌. eigenvalue의 범위를 줄이면 연산 과정의 stability를 높일 수 있다.
+
+eigenvalue의 범위를 줄인다.. == 노드 간의 차이를 보는 범위를 줄인다..? 그니까 fourier domain으로 생각을 해보면 분석하는 frequency의 범위를 줄여준다는 뜻인 거 같은데.. 그러는 이유가 연산 과정의 stability를 높인다..?
+
+자기자신+normalized를 S1-order이라고 했을 때 filter coefficient는 (2-ㅅi)^k의 값을 가진다. 이 때 ㅅi<1 인 경우에는 K가 커짐에 따라 filter coefficient의 값이 급격히 커진다. 이웃의 범위를 넓힐 수록 커진다. 왜냐하면 이웃꺼 볼 떄 L(L(x)) 이런 식으로 해줬으니까.
+
+그래서 eigenvalue의 크기를 줄이고자 renormalization trick을 주게 되었다. 그러면 coefficient가 (1-ㅅi)^K가 된다. self loop를 추가하게 되면 또 eigenvalue의 크기가 줄어들게 된다.
+
+정리하자면 eigenvalue의 의미는 Laplacian을 eigendecomposition해서 나온 값인데 spectrum 즉, 노드 간의 차이를 의미한다. eigenvalue를 작은순서대로 정렬하게 되면(내림차순 정렬) 자신의 이웃간의 차이가 낮은 애들부터 보게 된다. 즉, Frequency가 낮은 관계들을 우선적으로 반영하겠다는 의미. 
+
+Signal : Node Feature
+Frequency : Central Node와 Neighbor node간의 차이
+
+Graph Feature를 fourier transform 했을 때 높은 frequency의 value가 크다면 feature 간의 값 차이가 크다는 것==> eigenvalue의 값이 크다면 해당 central node와 neighbor node간의 차이가 크다는 의미. 하지만 우리가 원하는 것은 node간의 feature value차이가 적은 관계이다.
+
+Eigen-decomposition을 통해 ㅅ가 작은 순으로 sorting하게 되며 ㅅ가 frequency가 된다. Frequency가 작은, 즉 eigenvalue가 작은 eigenvector로 fourier transform 한다는 뜻은 central node와 차이가 적은 노드들간의 관계만 반영한다는 뜻. (Feature space에서 근거리에 있는 node들을 반영하겠다는 뜻)
+
+Polynomial parametrization을 하기 전의 문제
+1. 전체 Eigen value를 다 사용함으로써 localized 되지 않았고(non-parametric)
+2. Eigen decomposition으로 인한 computation 비용이 크다.
+
+parametrization 했을 때의 장점
+1. 이웃의 범위 k를 지정해줄 수 있따.
+
+https://tootouch.github.io/research/spectral_gcn/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
